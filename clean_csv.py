@@ -71,6 +71,44 @@ file_path = './phishing_emails_merged.csv'
 df = pd.read_csv(file_path)
 
 print(df.dtypes)
-print(df.head(100))
-#df.to_csv(file_path, index=False)
-df.head(100).to_csv('small.csv', index=False)
+print(df.head())
+find_multiple_data_types(df,'date')
+
+# Step 0: Fill NaN values with empty strings to avoid 'float' conversion errors
+df = df.fillna('')
+
+# Step 1: Try to convert the 'date' column to datetime
+df['parsed_date'] = pd.to_datetime(df['date'], errors='coerce', utc=True)
+
+# Step 2: Find rows where the date could not be parsed
+unparseable_dates = df[df['parsed_date'].isna()]['date']
+
+# Step 3: Detect different patterns using regular expressions
+def detect_date_format(date_str):
+    date_patterns = {
+        'YYYY-MM-DD': r'\d{4}-\d{2}-\d{2}',
+        'MM/DD/YYYY': r'\d{2}/\d{2}/\d{4}',
+        'Month DD, YYYY': r'[A-Za-z]+\s\d{1,2},\s\d{4}',
+        'YYYY.MM.DD': r'\d{4}\.\d{2}\.\d{2}',
+        'MM/DD/YYYY HH:MM AM/PM': r'\d{2}/\d{2}/\d{4} \d{1,2}:\d{2} [APap][Mm]',
+        'Unknown': 'Unknown'
+    }
+    
+    # Iterate through patterns and check if the date matches one of them
+    for pattern_name, pattern in date_patterns.items():
+        if re.match(pattern, date_str):
+            return pattern_name
+    return 'Unknown'
+
+# Step 4: Apply the regex to detect different formats in the unparseable dates
+unparseable_dates_with_format = unparseable_dates.apply(detect_date_format)
+
+# Display results
+print("Unparseable Dates and Detected Formats:")
+print(pd.DataFrame({'Date': unparseable_dates, 'Detected Format': unparseable_dates_with_format}))
+
+# Output the original DataFrame with parsed dates
+print("\nOriginal DataFrame with Parsed Dates:")
+print(df)
+
+
