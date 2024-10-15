@@ -66,12 +66,13 @@ def find_multiple_data_types(df, column_name):
         print(f"Column '{column_name}' contains only one data type.")
 
 
-file_path = './phishing_emails_merged.csv'
+file_path = './phishing_emails_merged_filtered.csv'
 #df = safe_load_csv(file_path)
 df = pd.read_csv(file_path)
 
 print(df.dtypes)
-print(df.head())
+print(df)
+exit()
 find_multiple_data_types(df,'date')
 
 # Step 0: Fill NaN values with empty strings to avoid 'float' conversion errors
@@ -110,5 +111,8 @@ print(pd.DataFrame({'Date': unparseable_dates, 'Detected Format': unparseable_da
 # Output the original DataFrame with parsed dates
 print("\nOriginal DataFrame with Parsed Dates:")
 print(df)
+df['date'] = df['parsed_date']
+df = df.drop(columns=['parsed_date'])
+df.to_csv('./phishing_emails_merged_filtered.csv', index=False)
 
 
