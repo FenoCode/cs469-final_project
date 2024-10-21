@@ -1,15 +1,19 @@
 import pandas as pd
 import textstat
 import matplotlib.pyplot as plt
+import testparse
 
 def calculate_readability_scores(text):
     """Calculate readability scores for a given text."""
     return {
-        'Flesch-Kincaid': textstat.flesch_kincaid_grade(text),
-        'Gunning Fog': textstat.gunning_fog(text),
-        'Flesch Reading Ease': textstat.flesch_reading_ease(text),
-        'SMOG Index': textstat.smog_index(text),
-        'Automated Readability Index': textstat.automated_readability_index(text),
+        #'Flesch-Kincaid': textstat.flesch_kincaid_grade(text),
+        #'Gunning Fog': textstat.gunning_fog(text),
+        #'Flesch Reading Ease': textstat.flesch_reading_ease(text),
+        #'SMOG Index': textstat.smog_index(text),
+        #'Automated Readability Index': textstat.automated_readability_index(text),
+        #'Coleman Liau' : textstat.coleman_liau_index(text),
+        #'Linsear Write Formula' : textstat.linsear_write_formula(text),
+        'Reading Time (ms)' : textstat.reading_time(text)
     }
 
 def analyze_phishing_emails(df):
@@ -56,9 +60,11 @@ if __name__ == '__main__':
     #df = safe_load_csv(file_path)
     df = pd.read_csv(file_path)
     df = df.dropna()
-    # Step 2: Filter rows between 1998 and 2013 (inclusive)
-    start_date = '1998-01-01'
-    end_date = '2013-12-31'
+    #df['body'] = df['body'].apply(testparse.preprocess_email_content)
+    print("Done parsing")
+    # Step 2: Filter rows between 1995 and 2013 (inclusive)
+    start_date = '1995-01-01'
+    end_date = '2022-12-31'
     df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
     # Sort and grab top values
     #df = df.sort_values(by='parsed_date',ascending=True)
