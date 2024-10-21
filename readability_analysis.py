@@ -60,7 +60,7 @@ if __name__ == '__main__':
     #df = safe_load_csv(file_path)
     df = pd.read_csv(file_path)
     df = df.dropna()
-    #df['body'] = df['body'].apply(testparse.preprocess_email_content)
+    df['body'] = df['body'].apply(testparse.preprocess_email_content)
     print("Done parsing")
     # Step 2: Filter rows between 1995 and 2013 (inclusive)
     start_date = '1995-01-01'
