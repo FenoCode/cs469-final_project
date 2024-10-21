@@ -31,15 +31,8 @@ if __name__ == "__main__":
         else:
             print(f"Column date contains only one data type.")
 
-
-file_path = './phishing_emails_merged.csv'
-#df = safe_load_csv(file_path)
-df = pd.read_csv(file_path)
-
-print(df.dtypes)
-
-# Step 0: Fill NaN values with empty strings to avoid 'float' conversion errors
-df = df.fillna('')
+    # Fill NaN values with empty strings to avoid 'float' conversion errors.
+    df = df.fillna('')
 
     # Try to convert the 'date' column to datetime.
     df['parsed_date'] = pd.to_datetime(df['date'], errors='coerce', utc=True)
@@ -60,5 +53,3 @@ df = df.fillna('')
     df['date'] = df['parsed_date']
     df = df.drop(columns=['parsed_date'])
     df.to_csv(output_file_path, index=False)
-
-
