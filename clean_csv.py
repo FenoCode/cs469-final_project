@@ -52,4 +52,8 @@ if __name__ == "__main__":
     # Step 3: Drop the unparseable dates.
     df['date'] = df['parsed_date']
     df = df.drop(columns=['parsed_date'])
+
+    # Step 4: Drop any column with NaN values in the text fields
+    df = df.dropna()
+    
     df.to_csv(output_file_path, index=False)
