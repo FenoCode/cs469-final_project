@@ -9,11 +9,11 @@ def calculate_readability_scores(text):
         #'Flesch-Kincaid': textstat.flesch_kincaid_grade(text),
         #'Gunning Fog': textstat.gunning_fog(text),
         #'Flesch Reading Ease': textstat.flesch_reading_ease(text),
-        #'SMOG Index': textstat.smog_index(text),
+        'SMOG Index': textstat.smog_index(text),
         #'Automated Readability Index': textstat.automated_readability_index(text),
         #'Coleman Liau' : textstat.coleman_liau_index(text),
         #'Linsear Write Formula' : textstat.linsear_write_formula(text),
-        'Reading Time (ms)' : textstat.reading_time(text)
+        #'Reading Time (ms)' : textstat.reading_time(text)
     }
 
 def analyze_phishing_emails(df):
@@ -40,9 +40,12 @@ def plot_readability_over_time(time_series_df):
     for column in time_series_df.columns[1:]:
         plt.plot(time_series_df['date'], time_series_df[column], label=column)
     
-    plt.title('Readability Scores of Phishing Emails (Monthly Average)')
-    plt.xlabel('Date')
-    plt.ylabel('Readability Score')
+    plt.title('Readability Scores of Phishing Emails (Monthly Average)', fontsize=24)
+    plt.xlabel('Date', fontsize=16)
+    plt.ylabel('Readability Score', fontsize=16)
+    # plt.title('Reading Time (Historical Average)', fontsize=24)
+    # plt.xlabel('Date', fontsize=16)
+    # plt.ylabel('Time (Seconds)', fontsize=16)
     plt.xticks(rotation=45)
     plt.legend()
     plt.grid()
@@ -60,7 +63,8 @@ if __name__ == '__main__':
     #df = safe_load_csv(file_path)
     df = pd.read_csv(file_path)
     df = df.dropna()
-    df['body'] = df['body'].apply(testparse.preprocess_email_content)
+    df = df.query('label == 1')
+    #df['body'] = df['body'].apply(testparse.preprocess_email_content)
     print("Done parsing")
     # Step 2: Filter rows between 1995 and 2013 (inclusive)
     start_date = '1995-01-01'

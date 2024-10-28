@@ -3,7 +3,7 @@ import pandas as pd
 
 csv.field_size_limit(10000000)  # Make CSV field size arbitrarily large.
 input_file_path = './phishing_emails_merged.csv'            # Input file path to load unparsed dataset.
-output_file_path = './phishing_emails_merged_filtered3.csv'  # Output file path with new parsed dataset.
+output_file_path = './phishing_emails_merged_filtered.csv'  # Output file path with new parsed dataset.
 debug_print = False             # Prints debugging information.
 output_file = True              # Outputs new parsed dataset.
 
