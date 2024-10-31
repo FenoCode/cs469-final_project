@@ -6,13 +6,13 @@ import testparse
 def calculate_readability_scores(text):
     """Calculate readability scores for a given text."""
     return {
-        #'Flesch-Kincaid': textstat.flesch_kincaid_grade(text),
-        #'Gunning Fog': textstat.gunning_fog(text),
+        'Flesch-Kincaid': textstat.flesch_kincaid_grade(text),
+        'Gunning Fog': textstat.gunning_fog(text),
         #'Flesch Reading Ease': textstat.flesch_reading_ease(text),
         'SMOG Index': textstat.smog_index(text),
         #'Automated Readability Index': textstat.automated_readability_index(text),
         #'Coleman Liau' : textstat.coleman_liau_index(text),
-        #'Linsear Write Formula' : textstat.linsear_write_formula(text),
+        'Linsear Write Formula' : textstat.linsear_write_formula(text),
         #'Reading Time (ms)' : textstat.reading_time(text)
     }
 
@@ -30,7 +30,7 @@ def analyze_phishing_emails(df):
     # Resample by month and calculate average readability scores
     analysis_df['date'] = pd.to_datetime(analysis_df['date'])
     analysis_df.set_index('date', inplace=True)
-    monthly_avg_df = analysis_df.resample('M').mean().reset_index()
+    monthly_avg_df = analysis_df.resample('6M').mean().reset_index()
     
     return monthly_avg_df
 
