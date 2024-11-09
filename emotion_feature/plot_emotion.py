@@ -15,8 +15,13 @@ color_mapping = {
 # Sample data loading
 # Replace this with your actual dataset
 # Assuming `df` has 'date' and 'label' columns
-df = pd.read_csv("./combined3.csv")
+df = pd.read_csv("./phishing_email_emotion_added.csv")
 df['date'] = pd.to_datetime(df['date'])  # Ensure 'date' is in datetime format
+
+start_date = '1995-01-01'
+end_date = '2008-12-31'
+df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
+df = df[df['label'] == 0]
 
 # Extract year from date
 df['year'] = df['date'].dt.year
