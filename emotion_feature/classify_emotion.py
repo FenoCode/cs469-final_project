@@ -56,11 +56,6 @@ file_path = './phishing_email_pii_added.csv'
 df = pd.read_csv(file_path)
 df = df.dropna()
 
-# Filter by date range
-start_date = '1995-01-01'
-end_date = '2022-12-31'
-df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
-
 # Process each email body and classify
 r = []
 for index, row in df.iterrows():
@@ -77,6 +72,11 @@ for index, row in df.iterrows():
             for label_class in classes:
                 label_scores[label_class['label']].append(label_class['score'])
 
+    # Error handling if text could not be chunked
+    if (len(label_scores['anger']) == 0):
+        r.append("NULL")
+        continue
+    
     # Average scores across chunks for each label
     avg_label_scores = {label: (sum(scores) / len(scores)) if scores else 0 for label, scores in label_scores.items()}
 
@@ -87,5 +87,4 @@ for index, row in df.iterrows():
 # Insert results into the dataframe
 df.insert(df.shape[1], "Emotion", r, True)
 print(df)
-df = df[['body', 'Emotion']]
-df.to_csv("./test.csv", index=False)
+df.to_csv("./phishing_email_emotion_added.csv", index=False)
