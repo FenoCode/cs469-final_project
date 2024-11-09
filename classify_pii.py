@@ -36,16 +36,8 @@ file_path = './phishing_emails_merged_filtered.csv'
 df = pd.read_csv(file_path)
 df = df.dropna()
 
-start_date = '1995-01-01'
-end_date = '2022-12-31'
-df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
-df = df.query("label == 1")
 
-#df = df.sort_values(by='date')
-#df_small = pd.concat([df.head(10000).sample(n=20), df.tail(10000).sample(n=20)])
-#del df
-
-batch_size = 64  # Adjust batch size based on GPU memory
+batch_size = 1024  # Adjust batch size based on GPU memory
 
 # Generate PII statistics about each email in batches
 results = []
