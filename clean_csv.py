@@ -4,7 +4,7 @@ import pandas as pd
 csv.field_size_limit(10000000)  # Make CSV field size arbitrarily large.
 input_file_path = './phishing_emails_merged.csv'            # Input file path to load unparsed dataset.
 output_file_path = './phishing_emails_merged_filtered.csv'  # Output file path with new parsed dataset.
-debug_print = False             # Prints debugging information.
+debug_print = True             # Prints debugging information.
 output_file = True              # Outputs new parsed dataset.
 
 # Main function.
@@ -19,17 +19,18 @@ if __name__ == "__main__":
         exit()
 
     # Apply type to each element in the column and get the unique types.
-    types_in_column = df['date'].apply(type).unique()
+    for column in df.columns.tolist():
 
-    if debug_print:
-        # Print the types found in the column.
-        print(f"Data types in column '{'date'}': {types_in_column}")
+        types_in_column = df[column].apply(type).unique()
+        if debug_print:
+            # Print the types found in the column.
+            print(f"Data types in column '{column}': {types_in_column}")
 
-        # Check if there are multiple data types.
-        if len(types_in_column) > 1:
-            print(f"Column date contains multiple data types.")
-        else:
-            print(f"Column date contains only one data type.")
+            # Check if there are multiple data types.
+            if len(types_in_column) > 1:
+                print(f"Column {column} contains multiple data types.")
+            else:
+                print(f"Column {column} contains only one data type.")
 
     # Fill NaN values with empty strings to avoid 'float' conversion errors.
     df = df.fillna('')
