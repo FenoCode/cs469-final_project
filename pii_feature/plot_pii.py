@@ -27,7 +27,7 @@ df = df[['date', 'label', 'PII Count']]
 
 # Step 2: Filter rows between 1995 and 2013 (inclusive)
 start_date = '1995-01-01'
-end_date = '2008-12-31'
+end_date = '2024-12-31'
 df_early = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
 df_early.set_index('date', inplace=True)
 

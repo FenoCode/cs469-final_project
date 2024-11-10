@@ -56,7 +56,7 @@ plt.tight_layout()
 plt.figure(figsize=(12, 6))
 
 start_date = '2008-12-31'
-end_date = '2022-12-31'
+end_date = '2024-12-31'
 df_late = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
 df_late.set_index('date', inplace=True)
 df_late = df_late.resample('3M').mean().reset_index()

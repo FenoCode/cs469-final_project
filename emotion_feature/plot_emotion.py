@@ -15,13 +15,12 @@ color_mapping = {
 # Sample data loading
 # Replace this with your actual dataset
 # Assuming `df` has 'date' and 'label' columns
-df = pd.read_csv("./phishing_email_emotion_added.csv")
+df = pd.read_csv("./phishing_emails_features_added.csv")
 df['date'] = pd.to_datetime(df['date'])  # Ensure 'date' is in datetime format
 
 start_date = '1995-01-01'
-end_date = '2008-12-31'
+end_date = '2024-12-31'
 df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
-df = df[df['label'] == 0]
 
 # Extract year from date
 df['year'] = df['date'].dt.year
@@ -59,14 +58,14 @@ pie_colors = [color_mapping[label] for label in labels]
 ax1.pie(sizes, labels=labels, autopct='%1.1f%%', colors=pie_colors, startangle=90)
 
 # Set the title for ax1
-ax1.set_title("Total Emotional Sentiment Distribution (Phishing Emails)")
+ax1.set_title("Total Emotional Sentiment Distribution (Non-Phishing Emails)")
 ax1.set_ylabel('')  # Hide y-label for a cleaner look
 
 # For the bar chart (ax2), apply the same colors to ensure consistency
 bar_colors = [color_mapping[label] for label in yearly_distribution.columns]
 # The second plot (e.g., bar chart) will go on ax2 as before
 yearly_distribution_percent.plot(kind='bar', stacked=True, color=bar_colors, ax=ax2)
-ax2.set_title("Emotional Sentiment Distribution by Year (Phishing Emails)")
+ax2.set_title("Emotional Sentiment Distribution by Year (Non-Phishing Emails)")
 ax2.set_xlabel("Year")
 ax2.set_ylabel("Percentage of Emails")
 ax2.tick_params(axis='x', rotation=45)
