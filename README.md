@@ -4,7 +4,7 @@ Repository for COSC 469/569 Final Project - Evolution of Phishing Attacks
 Project Members: Alex Crumley, Seth Jeroutek, Anna Weis
 
 ## Required Libraries
-pandas, csv, matplotlib, textstat, transformers, pytorch
+pandas, csv, matplotlib, textstat, transformers, pytorch, nltk
 
 ## Get Started
 

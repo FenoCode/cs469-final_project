@@ -61,6 +61,8 @@ start_date = '1995-01-01'
 end_date = '2022-12-31'
 df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
 
+#df = df.query('label == 0')
+
 # Process each email body and classify
 r = []
 for index, row in df.iterrows():
@@ -81,7 +83,7 @@ for index, row in df.iterrows():
     avg_label_scores = {label: (sum(scores) / len(scores)) if scores else 0 for label, scores in label_scores.items()}
 
     # Select the label with the highest average score
-    final_label = max(avg_label_scores, key=avg_label_scores.get)
+    final_label = max(avg_label_scores, key=avg_label_scores.get) 
     r.append(final_label)
 
 # Insert results into the dataframe

@@ -4,17 +4,16 @@ import matplotlib.pyplot as plt
 # Sample data loading
 # Replace this with your actual dataset
 # Assuming `df` has 'date' and 'label' columns
-df = pd.read_csv("./phishing_email_pii_emotion_added.csv")
+df = pd.read_csv("./phishing_email_pii_emotion_added_nonphishing.csv")
 df['date'] = pd.to_datetime(df['date'])  # Ensure 'date' is in datetime format
 
 # Extract year from date
 df['year'] = df['date'].dt.year
 
 # Total counts of phishing vs. non-phishing emails
-df = df[df['label'] == 1]
 total_counts = df['Emotion'].value_counts()
 print(total_counts)
-total_counts.plot(kind='pie', labels=df['Emotion'].unique())
+total_counts.plot(kind='pie')
 print(df['Emotion'].unique())
 plt.show()
 exit()
@@ -29,7 +28,7 @@ print(yearly_distribution_percent)
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 12), gridspec_kw={'width_ratios': [1, 2]})
 
 # First plot: Total phishing vs. non-phishing in the dataset
-total_counts.plot(kind='pie', labels=df['Emotion'].unique(), autopct='%1.1f%%', ax=ax1)
+total_counts.plot(kind='pie', autopct='%1.1f%%', ax=ax1)
 ax1.set_title("Total Phishing vs Non-Phishing Emails in Dataset")
 ax1.set_ylabel('')  # Hide y-label for a cleaner look
 
