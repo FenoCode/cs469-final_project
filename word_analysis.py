@@ -26,7 +26,7 @@ def cleanWord (w):
     wn = re.sub('[,"\.\'&\|:@>*;/=]', "", w)
     # get rid of numbers
     return re.sub('^[0-9\.]*$', "", wn)
-       
+""""
 # define a function to get text/clean/calculate frequency
 def get_wf (file):
     f = open(file, 'r', encoding="ascii", errors='replace')
@@ -57,6 +57,33 @@ def get_wf (file):
 
     # Reverse the list because barh plots items from the bottom
     return (wfs [ 0:ml ] [::-1], tw)
+"""
+def get_wf(file):
+    global start_date, end_date
+    # Load the file content into a DataFrame for easier manipulation
+    df = pd.read_csv(file, parse_dates=['date'])
+
+    # Filter dataframe based on provided date range
+    df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
+
+    # Split words and clean each word in the DataFrame
+    df['words'] = df['body'].str.split()
+    df = df.explode('words')
+    df['words'] = df['words'].apply(cleanWord)
+
+    # Remove stop words and empty strings
+    df = df[~df['words'].isin(stop_words) & df['words'].str.strip().astype(bool)]
+    
+    # Calculate word frequencies
+    wf = df['words'].value_counts()
+    
+    # Convert the Series to a list of tuples and get the top 50 words
+    wfs = wf.head(50).to_dict().items()
+    
+    # Calculate the total word count after cleaning
+    total_words = wf.sum()
+    
+    return list(wfs), total_words
 
 def plotWordCounts(wf, suptitle):
     # Sort the list in descending order by the count
@@ -82,14 +109,19 @@ def plotWordCounts(wf, suptitle):
     plt.show()
 
 def trackWordOverTime(csv_file, word, text_col='body', freq='D'):
+    global start_date, end_date
     # Load CSV file
     df = pd.read_csv(csv_file, parse_dates=['date'])
-    
+
+    # Filter dataframe based on provided date range
+    df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
+
     # Filter rows containing the word (case-insensitive)
     df['contains_word'] = df[text_col].str.contains(word, case=False, na=False)
     
     # Count occurrences of the word by date
     word_counts = df[df['contains_word']].groupby(pd.Grouper(key='date', freq=freq)).size()
+    print(word_counts)
     
     # Plot word occurrences over time
     plt.figure(figsize=(10, 6))
@@ -97,13 +129,17 @@ def trackWordOverTime(csv_file, word, text_col='body', freq='D'):
     plt.title(f"Occurrences of '{word}' Over Time")
     plt.xlabel("Date")
     plt.ylabel("Count")
-    plt.xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2024-01-01'))
+    plt.xlim(pd.Timestamp(start_date), pd.Timestamp(end_date))
     plt.grid(True)
     plt.show()
         
+# Data range globals
+start_date = '2007-01-01'
+end_date = '2008-12-31'
+
 # Now populate two lists    
 (wf_ee, tw_ee) = get_wf('phishing_emails_merged_filtered.csv')
 print(wf_ee)
 
-#plotWordCounts(wf_ee, 'Word Count for Phishing Emails')
-trackWordOverTime('phishing_emails_merged_filtered.csv', 'Enron')
+plotWordCounts(wf_ee, 'Word Count for Phishing Emails')
+trackWordOverTime('phishing_emails_merged_filtered.csv', 'email', freq='3M')
