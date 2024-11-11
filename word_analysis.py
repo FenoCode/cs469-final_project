@@ -134,8 +134,8 @@ def trackWordOverTime(csv_file, word, text_col='body', freq='D'):
     plt.show()
         
 # Data range globals
-start_date = '2007-01-01'
-end_date = '2008-12-31'
+start_date = '2019-01-01'
+end_date = '2024-12-31'
 
 # Now populate two lists    
 (wf_ee, tw_ee) = get_wf('phishing_emails_merged_filtered.csv')
