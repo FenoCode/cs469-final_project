@@ -1,6 +1,9 @@
 # User added
 phishing_data/*
 *.csv
+smishing_data/*.csv
+smishing_data/*.txt
+smishing_data/original
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
