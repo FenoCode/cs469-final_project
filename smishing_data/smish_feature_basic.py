@@ -1,5 +1,11 @@
 import re
 import pandas as pd
+# Script assumes the following columns = [body,label,URL,EMAIL,PHONE]
+# body = messsage content
+# label = smish, ham, spam
+# URL = Yes/No if URL present in message
+# EMAIL = Yes/No if email address present in message
+# PHONE = Yes/No if phone number present in message
 
 # Got code snippets from https://data.mendeley.com/datasets/f45bkkt8pr/1
 
