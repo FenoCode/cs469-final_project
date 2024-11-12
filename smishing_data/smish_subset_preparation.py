@@ -30,7 +30,10 @@ df2 = pd.read_csv("./smishing_data/smishtank.csv", encoding='latin1')
 
 df2 = df2[['MainText']]
 df2['body'] = df2['MainText']
+df2['body'] = df2['body'].apply(tp.remove_special_characters)
+df2['body'] = df2['body'].apply(tp.remove_excess_whitespace)
 df2 = df2.drop(columns=['MainText'])
+df2 = df2.dropna()
 
 labels =[]
 for i, row in df2.iterrows():
@@ -46,7 +49,10 @@ df3 = pd.read_csv("./smishing_data/Dataset_5971.csv")
 df3 = df3[['TEXT','LABEL']]
 df3['body'] = df3['TEXT']
 df3['label'] = df3['LABEL']
+df3['body'] = df3['body'].apply(tp.remove_special_characters)
+df3['body'] = df3['body'].apply(tp.remove_excess_whitespace)
 df3 = df3.drop(columns=['TEXT', 'LABEL'])
+df3.dropna()
 
 # Combine all files and normalize labels
 df = pd.concat([df1, df2, df3])
