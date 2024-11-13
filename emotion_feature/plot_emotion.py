@@ -21,6 +21,7 @@ df['date'] = pd.to_datetime(df['date'])  # Ensure 'date' is in datetime format
 start_date = '1995-01-01'
 end_date = '2024-12-31'
 df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
+df = df.query('label == 1')
 
 # Extract year from date
 df['year'] = df['date'].dt.year

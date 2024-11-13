@@ -59,7 +59,7 @@ if __name__ == '__main__':
     
     
     # Step 1: Read in dataset and do initial dataset cleanup
-    file_path = './phishing_emails_merged_filtered.csv'
+    file_path = './phishing_emails_features_added.csv'
     #df = safe_load_csv(file_path)
     df = pd.read_csv(file_path)
     df = df.dropna()
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     print("Done parsing")
     # Step 2: Filter rows between 1995 and 2013 (inclusive)
     start_date = '1995-01-01'
-    end_date = '2022-12-31'
+    end_date = '2024-12-31'
     df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
     # Sort and grab top values
     #df = df.sort_values(by='parsed_date',ascending=True)
