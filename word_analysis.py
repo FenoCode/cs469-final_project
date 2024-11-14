@@ -79,10 +79,15 @@ def trackWordsOverTime(df, words, text_col='body', freq='D'):
     # Initialize the plot
     plt.figure(figsize=(10, 6))
     
+    # Split words and clean each word in the DataFrame
+    df['words'] = df[text_col].str.split()
+    df = df.explode('words')
+    df['words'] = df['words'].apply(cleanWord)
+    
     # Loop over each word, filter for occurrences, and plot
     for word in words:
         # Filter rows containing the word (case-insensitive)
-        df['contains_word'] = df[text_col].str.contains(word, case=False, na=False)
+        df['contains_word'] = df['words'].str.contains(word, case=False, na=False)
         
         # Count occurrences of the word by date
         word_counts = df[df['contains_word']].groupby(pd.Grouper(key='date', freq=freq)).size()
@@ -145,7 +150,7 @@ print(wf_ee)
 plotWordCounts(wf_ee, 'Word Count for Phishing Emails (Past 5 Years)')
 
 # Get top N words to analyze
-num_targets = 3
+num_targets = 7
 target_words = [key for key, _ in wf_ee[:num_targets]]
 print(target_words)
 
@@ -188,7 +193,7 @@ frequencies = top_phrases['Frequency']
 words = top_phrases['Word']
 
 # Plot bars with phrases as y-tick labels
-colors = ['skyblue'] * num_phrases +  ['lightgreen'] * num_phrases +  ['salmon'] * num_phrases
+colors = ['skyblue'] * num_phrases +  ['lightgreen'] * num_phrases +  ['salmon'] * num_phrases + ['peachpuff'] * num_phrases + ['plum'] * num_phrases
 axs[1].barh(phrases, frequencies, color=colors)
 axs[1].invert_yaxis()  # Display the highest frequency at the top
 axs[1].set_xlabel("Frequency")
