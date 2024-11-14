@@ -187,7 +187,7 @@ axs[0].set_title("Most Frequent Words in Emails")
 
 # Create the phrase table as a bar chart with labels for each word
 # Get top phrases for each word
-top_phrases = df_phrases.groupby('Word', group_keys=False).apply(lambda x: x.nlargest(num_phrases, 'Frequency')).reset_index(drop=True)
+top_phrases = df_phrases.groupby('Word').apply(lambda x: x.nlargest(num_phrases, 'Frequency')).reset_index(drop=True)
 phrases = top_phrases['Phrase']
 frequencies = top_phrases['Frequency']
 words = top_phrases['Word']
