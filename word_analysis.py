@@ -1,5 +1,6 @@
 import re, nltk
 from collections import Counter
+from nltk.util import ngrams
 import operator
 import numpy as np
 import pandas as pd
@@ -26,45 +27,8 @@ def cleanWord (w):
     wn = re.sub('[,"\.\'&\|:@>*;/=]', "", w)
     # get rid of numbers
     return re.sub('^[0-9\.]*$', "", wn)
-""""
-# define a function to get text/clean/calculate frequency
-def get_wf (file):
-    f = open(file, 'r', encoding="ascii", errors='replace')
-    t = f.read()
-    
-    # obtain words by splitting a string using as separator one or more (+) space/like characters (\s) 
-    wds = re.split('\s+',t)
-    
-    # remove periods, commas, etc stuck to the edges of words
-    for i in range(len(wds)):
-        wds[i] = cleanWord(wds [i])
-    
-    # now populate a dictionary (wf)
-    wf = Counter (wds)
-    
-    # Remove stop words from the dictionary wf
-    for k in stop_words:
-        wf. pop(k, None)
-    
-    # Word count
-    tw = 0
-    for w in wf:
-       tw += wf[w] 
-        
-    # Get ordered list
-    wfs = sorted (wf.items(), key = operator.itemgetter(1), reverse=True)
-    ml = min(len(wfs),50)
 
-    # Reverse the list because barh plots items from the bottom
-    return (wfs [ 0:ml ] [::-1], tw)
-"""
-def get_wf(file):
-    global start_date, end_date
-    # Load the file content into a DataFrame for easier manipulation
-    df = pd.read_csv(file, parse_dates=['date'])
-
-    # Filter dataframe based on provided date range
-    df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
+def get_wf(df):
 
     # Split words and clean each word in the DataFrame
     df['words'] = df['body'].str.split()
@@ -78,7 +42,7 @@ def get_wf(file):
     wf = df['words'].value_counts()
     
     # Convert the Series to a list of tuples and get the top 50 words
-    wfs = wf.head(50).to_dict().items()
+    wfs = wf.head(30).to_dict().items()
     
     # Calculate the total word count after cleaning
     total_words = wf.sum()
@@ -108,13 +72,8 @@ def plotWordCounts(wf, suptitle):
     # Show the plot
     plt.show()
 
-def trackWordOverTime(csv_file, word, text_col='body', freq='D'):
+def trackWordOverTime(df, word, text_col='body', freq='D'):
     global start_date, end_date
-    # Load CSV file
-    df = pd.read_csv(csv_file, parse_dates=['date'])
-
-    # Filter dataframe based on provided date range
-    df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
 
     # Filter rows containing the word (case-insensitive)
     df['contains_word'] = df[text_col].str.contains(word, case=False, na=False)
@@ -132,14 +91,65 @@ def trackWordOverTime(csv_file, word, text_col='body', freq='D'):
     plt.xlim(pd.Timestamp(start_date), pd.Timestamp(end_date))
     plt.grid(True)
     plt.show()
+
+def clean_word(word):
+    """Remove special characters and make lowercase for uniformity."""
+    return re.sub(r'[^\w\s]', '', word.lower())
+
+def extract_common_phrases(df, target_words, window_size=3):
+    """Extract common phrases around target words with a specified window size in a CSV file."""
+
+    df['body'] = df['body'].fillna('').astype(str)
+
+    phrase_counter = {word: Counter() for word in target_words}
+
+    for text in df['body']:
+        words = text.split()  # Tokenize each email body
+        clean_words = [clean_word(word) for word in words]
         
+        for i, word in enumerate(clean_words):
+            if word in target_words:
+                # Get context window around target word
+                start = max(0, i - window_size)
+                end = min(len(clean_words), i + window_size + 1)
+                context_window = clean_words[start:end]
+                
+                # Create phrases (skip-grams) in the context window
+                phrases = list(ngrams(context_window, len(context_window)))
+                
+                # Add phrases to the phrase counter for this target word
+                for phrase in phrases:
+                    phrase_counter[word][" ".join(phrase)] += 1
+
+    return phrase_counter
+
 # Data range globals
 start_date = '2019-01-01'
 end_date = '2024-12-31'
 
+# Load the data, filter, and prepare the DataFrame at the top level
+df = pd.read_csv('phishing_emails_features_added.csv', parse_dates=['date'])
+df = df.query('label == 1')
+df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
+
+
 # Now populate two lists    
-(wf_ee, tw_ee) = get_wf('phishing_emails_merged_filtered.csv')
+(wf_ee, tw_ee) = get_wf(df)
 print(wf_ee)
 
 plotWordCounts(wf_ee, 'Word Count for Phishing Emails')
-trackWordOverTime('phishing_emails_merged_filtered.csv', 'email', freq='3M')
+trackWordOverTime(df, 'email', freq='3M')
+trackWordOverTime(df, 'account', freq='3M')
+trackWordOverTime(df, 'information', freq='3M')
+
+# Find context phrases around the top 3 occurring words
+target_words = [key for key, _ in wf_ee[:3]]
+print(target_words)
+window_size = 5 # Context words surrouding the key word (phrase size)
+phrase_counts = extract_common_phrases(df, target_words, window_size)
+
+# Display the most common phrases for each target word
+for word, phrases in phrase_counts.items():
+    print(f"Common phrases around '{word}':")
+    print(phrases.most_common(10))  # Display the 10 most common phrases
+    print()
