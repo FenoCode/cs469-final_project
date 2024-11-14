@@ -5,6 +5,7 @@ import operator
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 
 #nltk.download('stopwords')
  
@@ -28,7 +29,7 @@ def cleanWord (w):
     # get rid of numbers
     return re.sub('^[0-9\.]*$', "", wn)
 
-def get_wf(df):
+def get_wf(df, top_words):
 
     # Split words and clean each word in the DataFrame
     df['words'] = df['body'].str.split()
@@ -42,7 +43,7 @@ def get_wf(df):
     wf = df['words'].value_counts()
     
     # Convert the Series to a list of tuples and get the top 50 words
-    wfs = wf.head(30).to_dict().items()
+    wfs = wf.head(top_words).to_dict().items()
     
     # Calculate the total word count after cleaning
     total_words = wf.sum()
@@ -72,23 +73,29 @@ def plotWordCounts(wf, suptitle):
     # Show the plot
     plt.show()
 
-def trackWordOverTime(df, word, text_col='body', freq='D'):
+def trackWordsOverTime(df, words, text_col='body', freq='D'):
     global start_date, end_date
-
-    # Filter rows containing the word (case-insensitive)
-    df['contains_word'] = df[text_col].str.contains(word, case=False, na=False)
     
-    # Count occurrences of the word by date
-    word_counts = df[df['contains_word']].groupby(pd.Grouper(key='date', freq=freq)).size()
-    print(word_counts)
-    
-    # Plot word occurrences over time
+    # Initialize the plot
     plt.figure(figsize=(10, 6))
-    word_counts.plot(kind='line', marker='o', color='skyblue', linewidth=2)
-    plt.title(f"Occurrences of '{word}' Over Time")
+    
+    # Loop over each word, filter for occurrences, and plot
+    for word in words:
+        # Filter rows containing the word (case-insensitive)
+        df['contains_word'] = df[text_col].str.contains(word, case=False, na=False)
+        
+        # Count occurrences of the word by date
+        word_counts = df[df['contains_word']].groupby(pd.Grouper(key='date', freq=freq)).size()
+        
+        # Plot word occurrences over time with a unique color for each word
+        word_counts.plot(kind='line', marker='o', linewidth=2, label=word)
+
+    # Add title, labels, and legend
+    plt.title("Occurrences of Words Over Time")
     plt.xlabel("Date")
     plt.ylabel("Count")
     plt.xlim(pd.Timestamp(start_date), pd.Timestamp(end_date))
+    plt.legend(title="Words")
     plt.grid(True)
     plt.show()
 
@@ -132,24 +139,64 @@ df = pd.read_csv('phishing_emails_features_added.csv', parse_dates=['date'])
 df = df.query('label == 1')
 df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
 
-
-# Now populate two lists    
-(wf_ee, tw_ee) = get_wf(df)
+# Calculate word frequency in emails   
+(wf_ee, tw_ee) = get_wf(df, top_words=20)
 print(wf_ee)
+plotWordCounts(wf_ee, 'Word Count for Phishing Emails (Past 5 Years)')
 
-plotWordCounts(wf_ee, 'Word Count for Phishing Emails')
-trackWordOverTime(df, 'email', freq='3M')
-trackWordOverTime(df, 'account', freq='3M')
-trackWordOverTime(df, 'information', freq='3M')
-
-# Find context phrases around the top 3 occurring words
-target_words = [key for key, _ in wf_ee[:3]]
+# Get top N words to analyze
+num_targets = 3
+target_words = [key for key, _ in wf_ee[:num_targets]]
 print(target_words)
-window_size = 5 # Context words surrouding the key word (phrase size)
-phrase_counts = extract_common_phrases(df, target_words, window_size)
 
+# Plot occurences over time
+trackWordsOverTime(df, target_words, freq='3ME')
+
+# Find context phrases around the top N occurring words
+window_size = 3 # Context words surrouding the key word (phrase size)
+num_phrases = 3
+phrase_counts = extract_common_phrases(df, target_words, window_size)
+phrase_count_data = []
 # Display the most common phrases for each target word
 for word, phrases in phrase_counts.items():
     print(f"Common phrases around '{word}':")
-    print(phrases.most_common(10))  # Display the 10 most common phrases
+    phrase_lst = phrases.most_common(num_phrases) # Display the N most common phrases
+    print(phrase_lst)
     print()
+    # Transforming Counter() data for future data visualization
+    for phrase in phrase_lst: 
+        phrase_count_data.append( (word, phrase[0], phrase[1]))
+
+# Generate word cloud and plot alongside the most commonly occuring phrases
+df_phrases = pd.DataFrame(phrase_count_data, columns=['Word', 'Phrase', 'Frequency'])
+
+# Set up figure and axes for the word cloud and table side-by-side
+fig, axs = plt.subplots(1, 2, figsize=(14, 7))
+
+# Generate and plot the word cloud
+wf_ee = dict(wf_ee)
+wordcloud = WordCloud(width=600, height=400, background_color='white').generate_from_frequencies(wf_ee)
+axs[0].imshow(wordcloud, interpolation='bilinear')
+axs[0].axis('off')
+axs[0].set_title("Most Frequent Words in Emails")
+
+# Create the phrase table as a bar chart with labels for each word
+# Get top phrases for each word
+top_phrases = df_phrases.groupby('Word', group_keys=False).apply(lambda x: x.nlargest(num_phrases, 'Frequency')).reset_index(drop=True)
+phrases = top_phrases['Phrase']
+frequencies = top_phrases['Frequency']
+words = top_phrases['Word']
+
+# Plot bars with phrases as y-tick labels
+colors = ['skyblue'] * num_phrases +  ['lightgreen'] * num_phrases +  ['salmon'] * num_phrases
+axs[1].barh(phrases, frequencies, color=colors)
+axs[1].invert_yaxis()  # Display the highest frequency at the top
+axs[1].set_xlabel("Frequency")
+axs[1].set_title("Most Common Phrases Around Keywords")
+
+# Annotate bars with the associated keyword
+for index, (freq, word) in enumerate(zip(frequencies, words)):
+    axs[1].text(freq + 1, index, word, va='center', ha='left', color='black', fontweight='bold')
+
+plt.tight_layout()
+plt.show()
