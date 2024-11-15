@@ -27,7 +27,7 @@ df = df[['date', 'label', 'NER Count']]
 
 # Step 2: Filter rows between 1995 and 2013 (inclusive)
 start_date = '1995-01-01'
-end_date = '2008-12-31'
+end_date = '2024-12-31'
 df_early = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
 df_early.set_index('date', inplace=True)
 
@@ -45,9 +45,9 @@ plt.plot(df_spam['date'], df_spam['NER Count'], label='Phishing')
 #chatgpt_release_date = '2022-11-30'  # Use the specific release date
 #plt.axvline(x=pd.to_datetime(chatgpt_release_date), color='red', linestyle='--', label='ChatGPT Release')
 
-plt.title('NER Occurrences Over Time')
-plt.xlabel('Date')
-plt.ylabel('Avg Occurrences in Email')
+plt.title('NER Occurrences Over Time', fontsize=16)
+plt.xlabel('Date', fontsize=14)
+plt.ylabel('Avg Occurrences in Email', fontsize=14)
 plt.xticks(rotation=45)
 plt.legend()
 plt.grid()
