@@ -147,10 +147,10 @@ df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
 # Calculate word frequency in emails   
 (wf_ee, tw_ee) = get_wf(df, top_words=20)
 print(wf_ee)
-plotWordCounts(wf_ee, 'Word Count for Phishing Emails (Past 5 Years)')
+plotWordCounts(wf_ee, 'Word Count for Phishing Emails (2019-2024)')
 
 # Get top N words to analyze
-num_targets = 7
+num_targets = 3
 target_words = [key for key, _ in wf_ee[:num_targets]]
 print(target_words)
 
