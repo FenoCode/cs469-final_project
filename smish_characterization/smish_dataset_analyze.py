@@ -50,14 +50,15 @@ print(p_values)
 
 # Step 6: Visualizations for Feature Presence by Label
 features = ['URL', 'EMAIL', 'PHONE']
-for feature in features:
-    plt.figure(figsize=(8, 4))
-    sns.countplot(x=feature, hue='label', data=df, palette="viridis")
-    plt.title(f"Presence of {feature} by Label")
-    plt.xlabel(f"{feature} Presence")
-    plt.ylabel("Count")
-    plt.legend(title="Label", loc="upper right", labels=["ham", "smish/spam"])
-    plt.show()
+fig, axs = plt.subplots(1, 3, figsize=(14, 7))
+for i, feature in enumerate(features):
+    countplot = sns.countplot(x=feature, hue='label', data=df, palette="viridis", ax=axs[i])
+    axs[i].set_title(f"Presence of {feature} by Label")
+    axs[i].set_xlabel(f"{feature} Presence")
+    axs[i].set_ylabel("Count")
+    axs[i].legend(title="Label", loc="upper right", labels=["ham", "smish/spam"])
+
+plt.show()
 
 
 # Total count of each label
