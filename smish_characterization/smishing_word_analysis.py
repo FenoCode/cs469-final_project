@@ -183,7 +183,7 @@ wf_ee = dict(wf_ee)
 wordcloud = WordCloud(width=600, height=400, background_color='white').generate_from_frequencies(wf_ee)
 axs[0].imshow(wordcloud, interpolation='bilinear')
 axs[0].axis('off')
-axs[0].set_title("Most Frequent Words in Emails")
+axs[0].set_title("Most Frequent Words in Smishing Messages", fontsize=14)
 
 # Create the phrase table as a bar chart with labels for each word
 # Get top phrases for each word
@@ -197,7 +197,7 @@ colors = ['skyblue'] * num_phrases +  ['lightgreen'] * num_phrases +  ['salmon']
 axs[1].barh(phrases, frequencies, color=colors)
 axs[1].invert_yaxis()  # Display the highest frequency at the top
 axs[1].set_xlabel("Frequency")
-axs[1].set_title("Most Common Phrases Around Keywords")
+axs[1].set_title("Most Common Phrases Around Keywords", fontsize=14)
 
 # Annotate bars with the associated keyword
 for index, (freq, word) in enumerate(zip(frequencies, words)):
