@@ -21,7 +21,7 @@ df['date'] = pd.to_datetime(df['date'])  # Ensure 'date' is in datetime format
 start_date = '1995-01-01'
 end_date = '2024-12-31'
 df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
-df = df.query('label == 0')
+df = df.query('label == 1')
 
 # Extract year from date
 df['year'] = df['date'].dt.year
@@ -59,17 +59,23 @@ pie_colors = [color_mapping[label] for label in labels]
 ax1.pie(sizes, labels=labels, autopct='%1.1f%%', colors=pie_colors, startangle=90)
 
 # Set the title for ax1
-ax1.set_title("Total Emotional Sentiment Distribution (Non-Phishing Emails)")
+ax1.set_title("Total Emotional Sentiment Distribution (Phishing Emails)", fontsize=14)
 ax1.set_ylabel('')  # Hide y-label for a cleaner look
+ax1.tick_params(axis='x', labelsize=14)
+ax1.tick_params(axis='y', labelsize=14)
 
 # For the bar chart (ax2), apply the same colors to ensure consistency
 bar_colors = [color_mapping[label] for label in yearly_distribution.columns]
 # The second plot (e.g., bar chart) will go on ax2 as before
 yearly_distribution_percent.plot(kind='bar', stacked=True, color=bar_colors, ax=ax2)
-ax2.set_title("Emotional Sentiment Distribution by Year (Non-Phishing Emails)")
-ax2.set_xlabel("Year")
-ax2.set_ylabel("Percentage of Emails")
+ax2.set_title("Emotional Sentiment Distribution by Year (Phishing Emails)",fontsize=18)
+ax2.set_xlabel("Year",fontsize=16)
+ax2.set_ylabel("Percentage of Emails",fontsize=16)
 ax2.tick_params(axis='x', rotation=45)
+ax2.tick_params(axis='x', labelsize=14)
+ax2.tick_params(axis='y', labelsize=14)
+ax2.legend(fontsize=14)
+
 
 # Improve layout
 plt.tight_layout()

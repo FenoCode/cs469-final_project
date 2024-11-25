@@ -52,10 +52,12 @@ features = ['URL', 'EMAIL', 'PHONE']
 fig, axs = plt.subplots(1, 3, figsize=(14, 7))
 for i, feature in enumerate(features):
     countplot = sns.countplot(x=feature, hue='label', data=df, palette="viridis", ax=axs[i])
-    axs[i].set_title(f"Presence of {feature} by Label")
-    axs[i].set_xlabel(f"{feature} Presence")
-    axs[i].set_ylabel("Count")
-    axs[i].legend(title="Label", loc="upper right", labels=["non-phishing", "phishing"])
+    axs[i].set_title(f"Presence of {feature} by Label", fontsize=18)
+    axs[i].set_xlabel(f"{feature} Presence", fontsize=16)
+    axs[i].set_ylabel("Count", fontsize=16)
+    axs[i].tick_params(axis='x', labelsize=14)
+    axs[i].tick_params(axis='y', labelsize=14)
+    axs[i].legend(title="Label", loc="upper right", labels=["non-phishing", "phishing"],fontsize=14)
 
 plt.show()
 

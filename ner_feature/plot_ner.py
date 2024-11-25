@@ -45,11 +45,12 @@ plt.plot(df_spam['date'], df_spam['NER Count'], label='Phishing')
 #chatgpt_release_date = '2022-11-30'  # Use the specific release date
 #plt.axvline(x=pd.to_datetime(chatgpt_release_date), color='red', linestyle='--', label='ChatGPT Release')
 
-plt.title('NER Occurrences Over Time', fontsize=16)
-plt.xlabel('Date', fontsize=14)
-plt.ylabel('Avg Occurrences in Email', fontsize=14)
-plt.xticks(rotation=45)
-plt.legend()
+plt.title('NER Occurrences Over Time', fontsize=18)
+plt.xlabel('Date', fontsize=16)
+plt.ylabel('Avg Occurrences in Email', fontsize=16)
+plt.xticks(rotation=45, fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=14)
 plt.grid()
 plt.tight_layout()
 
