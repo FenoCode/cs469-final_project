@@ -8,10 +8,16 @@ pandas, csv, matplotlib, textstat, transformers, pytorch, nltk
 
 ## Get Started
 
-1. Pull down the phishing dataset `https://drive.google.com/drive/u/1/folders/15MJqR1y_No0ne75ylFIagiWDuDb8ZhQw`.
+### Phishing
+1. Pull down the phishing dataset `https://drive.google.com/drive/folders/1Knmm0iuio-X4oVjTs4cWEvT9vz7a-ds5?usp=sharing`.
     - Dataset Range: 1995-2022
-2. Generate combined data set: run the `python3 dataset_mergepy` command.
+2. Generate combined data set: run the `python3 dataset_merge.py` command.
 3. To begin working with the dataset, you can use the code found in `clean_csv.py` dataset.
+
+### Smishing
+1. Pull down the smishing dataset `https://drive.google.com/drive/folders/1Knmm0iuio-X4oVjTs4cWEvT9vz7a-ds5?usp=sharing`
+2. To generate the raw combined data set: run the `python3 ./smishing_data/smish-subset-preparation.py` command
+3. You can begin working with the dataset as you please.
 
 ## Interpreting the figures
 1. Readability Scores
